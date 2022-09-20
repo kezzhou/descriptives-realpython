@@ -10,6 +10,7 @@ import scipy.stats
 
 import pandas as pd
 
+import matplotlib.pyplot as plt
 
 
 
@@ -680,3 +681,301 @@ r = cov_xy / (std_x * std_y)
 
 r
 
+## scipy stats pearsonr()
+
+r, p = scipy.stats.pearsonr(x_, y_)
+
+r ## returns correlation coefficient
+
+p ## returns p value
+
+
+## numpy correlation coefficient matrix
+
+corr_matrix = np.corrcoef(x_, y_)
+
+corr_matrix
+
+r = corr_matrix[0, 1]
+
+r
+
+r = corr_matrix[1, 0]
+
+r ## directly get the coefficient instead of returning matrix
+## this can be applied to pure python and pearsonr() (as we saw)
+
+scipy.stats.linregress(x_, y_) ## .linregress performs linear regression and returns results
+
+## to isolate r
+
+result = scipy.stats.linregress(x_, y_)
+
+r = result.rvalue
+
+r
+
+
+## pandas correlation coefficient
+
+r = x__.corr(y__)
+
+r
+
+r = y__.corr(x__)
+
+r
+
+
+
+
+#### Working with 2D Data ####
+
+a = np.array([[1, 1, 1],
+              [2, 3, 1],
+              [4, 9, 2],
+              [8, 27, 4],
+              [16, 1, 1]])
+
+a
+
+## applying some statistics
+
+np.mean(a)
+
+a.mean()
+
+np.median(a)
+
+a.var(ddof=1)
+
+## working with axes
+
+## axis=None says to calculate the statistics across all data in the array. The examples above work like this. This behavior is often the default in NumPy.
+## axis=0 says to calculate the statistics across all rows, that is, for each column of the array. This behavior is often the default for SciPy statistical functions.
+## axis=1 says to calculate the statistics across all columns, that is, for each row of the array.
+
+np.mean(a, axis=0)
+
+a.mean(axis=0) ## for all columns
+
+np.mean(a, axis=1)
+
+a.mean(axis=1) ## for all rows
+
+np.median(a, axis=0)
+
+np.median(a, axis=1)
+
+a.var(axis=0, ddof=1)
+
+a.var(axis=1, ddof=1)
+
+scipy.stats.gmean(a)  # default: axis=0
+
+scipy.stats.gmean(a, axis=0)
+
+scipy.stats.gmean(a, axis=1)
+
+scipy.stats.gmean(a, axis=None) ## for entire dataset
+
+scipy.stats.describe(a, axis=None, ddof=1, bias=False)
+
+scipy.stats.describe(a, ddof=1, bias=False)  # default: axis=0
+
+scipy.stats.describe(a, axis=1, ddof=1, bias=False) ## be careful with axis parameter when using describe with 2D data
+
+result = scipy.stats.describe(a, axis=1, ddof=1, bias=False)
+
+result.mean ## isolating a particular value with dot notation
+
+
+
+## Data Frames ##
+
+row_names = ['first', 'second', 'third', 'fourth', 'fifth']
+
+col_names = ['A', 'B', 'C']
+
+df = pd.DataFrame(a, index=row_names, columns=col_names)
+
+df
+
+df.mean()
+
+df.var() ## by default, returns values for all columns
+
+df.mean(axis=1)
+
+df.var(axis=1) ## specifying axis=1 will return results for each row
+
+df['A'] ## to isolate a single column of a df
+
+df['A'].mean()
+
+df['A'].var() ## after isolation, it is easy to get the results for just that column
+
+df.values
+
+df.to_numpy() ## sometimes it is appropriate to transfer the pd df to a numpy array
+
+df.describe() ## again, by default, returning results for each column
+
+df.describe().at['mean', 'A']
+
+df.describe().at['50%', 'B'] ## accessing specific values
+
+
+
+
+#### Visualizing Data ####
+
+## matplotlib.pyplot is one of the most popular libraries to use for visualization
+## it is already included in imports above
+
+plt.style.use('ggplot')
+
+
+## Boxplot ##
+
+np.random.seed(seed=0)
+
+x = np.random.randn(1000)
+
+y = np.random.randn(100)
+
+z = np.random.randn(10)
+
+fig, ax = plt.subplots()
+
+ax.boxplot((x, y, z), vert=False, showmeans=True, meanline=True,
+           labels=('x', 'y', 'z'), patch_artist=True,
+           medianprops={'linewidth': 2, 'color': 'purple'},
+           meanprops={'linewidth': 2, 'color': 'red'})
+
+plt.show()
+
+## .boxplot parameters
+##x is your data.
+## vert sets the plot orientation to horizontal when False. The default orientation is vertical.
+## showmeans shows the mean of your data when True.
+## meanline represents the mean as a line when True. The default representation is a point.
+## labels: the labels of your data.
+## patch_artist determines how to draw the graph.
+## medianprops denotes the properties of the line representing the median.
+## meanprops indicates the properties of the line or dot representing the mean.
+
+
+## Histograms ##
+
+hist, bin_edges = np.histogram(x, bins=10)
+
+hist
+
+bin_edges
+
+fig, ax = plt.subplots()
+
+ax.hist(x, bin_edges, cumulative=False)
+
+ax.set_xlabel('x')
+
+ax.set_ylabel('Frequency')
+
+plt.show()
+
+## changing cumulative to True
+
+fig, ax = plt.subplots()
+
+ax.hist(x, bin_edges, cumulative=True)
+
+ax.set_xlabel('x')
+
+ax.set_ylabel('Frequency')
+
+plt.show()
+
+
+## Pie Charts ##
+
+x, y, z = 128, 256, 1024
+
+fig, ax = plt.subplots()
+
+ax.pie((x, y, z), labels=('x', 'y', 'z'), autopct='%1.1f%%')
+
+plt.show()
+
+
+## Bar Charts ##
+
+x = np.arange(21)
+
+y = np.random.randint(21, size=21)
+
+err = np.random.randn(21)
+
+fig, ax = plt.subplots()
+
+ax.bar(x, y, yerr=err)
+
+ax.set_xlabel('x')
+
+ax.set_ylabel('y')
+
+plt.show() ## barh() can be used for horizontal bars
+
+
+## X-Y Plots ##
+
+x = np.arange(21)
+
+y = 5 + 2 * x + 2 * np.random.randn(21)
+
+slope, intercept, r, *__ = scipy.stats.linregress(x, y)
+
+line = f'Regression line: y={intercept:.2f}+{slope:.2f}x, r={r:.2f}'
+
+fig, ax = plt.subplots()
+
+ax.plot(x, y, linewidth=0, marker='s', label='Data points')
+
+ax.plot(x, intercept + slope * x, label=line)
+
+ax.set_xlabel('x')
+
+ax.set_ylabel('y')
+
+ax.legend(facecolor='white')
+
+plt.show()
+
+
+## Heat Maps ##
+
+matrix = np.cov(x, y).round(decimals=2)
+fig, ax = plt.subplots()
+ax.imshow(matrix)
+ax.grid(False)
+ax.xaxis.set(ticks=(0, 1), ticklabels=('x', 'y'))
+ax.yaxis.set(ticks=(0, 1), ticklabels=('x', 'y'))
+ax.set_ylim(1.5, -0.5)
+for i in range(2):
+    for j in range(2):
+        ax.text(j, i, matrix[i, j], ha='center', va='center', color='w')
+plt.show()
+
+## correlation coefficient heat map
+
+matrix = np.corrcoef(x, y).round(decimals=2)
+fig, ax = plt.subplots()
+ax.imshow(matrix)
+ax.grid(False)
+ax.xaxis.set(ticks=(0, 1), ticklabels=('x', 'y'))
+ax.yaxis.set(ticks=(0, 1), ticklabels=('x', 'y'))
+ax.set_ylim(1.5, -0.5)
+for i in range(2):
+    for j in range(2):
+        ax.text(j, i, matrix[i, j], ha='center', va='center', color='w')
+plt.show()
